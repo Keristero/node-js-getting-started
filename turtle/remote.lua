@@ -3,7 +3,7 @@ x = tonumber(args[1])
 y = tonumber(args[2])
 z = tonumber(args[3])
 orientation = 1 --North
-local label = os.getComputerLabel()
+label = os.getComputerLabel()
 
 print(label,"starting at",x,y,z)
 
@@ -16,15 +16,20 @@ function getLastPosition()
         ["label"] = label
     }
     local res = http.get("https://dry-cove-25939.herokuapp.com/lastPosition",headers)
+
+    if res == nil then
+        print("no last pos, run with x y z coordinates!")
+        return false
+    end
+
     local resText = res.readAll()
-    if(resText ~= "none"){
-        lastPos = textutils.unserialize(res.readAll())
-        x = lastPos.x
-        y = lastPos.y
-        z = lastPos.z
-        orientation = lastPos.orientation
-        print("got last pos!",x,y,z)
-    }
+    lastPos = textutils.unserialize(resText)
+    x = lastPos.x
+    y = lastPos.y
+    z = lastPos.z
+    orientation = lastPos.orientation
+    print("got last pos!",x,y,z)
+    return true
 end
 
 function requestCommands()
@@ -33,6 +38,7 @@ function requestCommands()
         ["x"] = tostring(x),
         ["y"] = tostring(y),
         ["z"] = tostring(z),
+        ["o"] = tostring(orientation),
     }
     local res = http.get("https://dry-cove-25939.herokuapp.com/turtle",headers)
     local command = res.readAll()
@@ -102,8 +108,13 @@ function right()
     end
 end
 
-getLastPosition()
-while true do
-    requestCommands()
-    sleep(1)
+if x == nil and y == nil and z == nil then
+    print("no position specified, downloading last position")
+    res = getLastPosition()
+end
+if res == true then
+    while true do
+        requestCommands()
+        sleep(1)
+    end
 end

@@ -65,9 +65,9 @@ app.get('/lastPosition', (req, res) => {
             z:turtle.z,
             orientation:turtle.orientation
         }
-        res.send(JSON.serialize(lastPos))
+        res.send(JSON.stringify(lastPos))
     }else{
-        res.send("none")
+        res.send("")
     }
 })
 
