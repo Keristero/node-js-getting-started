@@ -3,8 +3,10 @@ const PORT = process.env.PORT || 3000
 
 //Boilerplate
 let app = require('express')();
-let http = require('http').createServer(app);
-let io = require('socket.io')(http);
+let http = require('http');
+
+var server = http.createServer(app);
+let io = require('socket.io').listen(server);
 app.use(express.static('client'))
 
 let turtles = {}
