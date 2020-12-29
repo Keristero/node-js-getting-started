@@ -17,13 +17,14 @@ function getLastPosition()
     }
     local res = http.get("https://dry-cove-25939.herokuapp.com/lastPosition",headers)
 
-    if res == nil then
+    if res.getResponseCode() ~= 200 then
         print("no last pos, run with x y z coordinates!")
         return false
     end
 
     local resText = res.readAll()
-    lastPos = textutils.unserialize(resText)
+    print("res",resText)
+    local lastPos = textutils.unserialize(resText)
     x = lastPos.x
     y = lastPos.y
     z = lastPos.z
