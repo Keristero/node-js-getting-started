@@ -151,7 +151,7 @@ function drawGrid(){
         let adjustedY = y-lowestY
         ctx.fillStyle = 'green'
         ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
-        ctx.fillStyle = 'black'
-        ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`, 10, 50);
+        ctx.fillStyle = 'blue'
+        ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`, adjustedX*gridScale, adjustedY*gridScale);
     }
 }
