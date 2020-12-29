@@ -28,6 +28,11 @@ class Turtle{
         this.y = y;
         this.z = z;
     }
+    getNextAction(){
+        let action = this.nextAction
+        this.nextAction = ""
+        return action
+    }
 }
 
 function broadcastTurtleInfo(){
@@ -42,7 +47,9 @@ app.get('/turtle', (req, res) => {
     let y = req.header('y')
     let z = req.header('z')
     updateTurtleInfo(label,x,y,z)
-    res.send('ok')
+    let turtle = turtles[label]
+    let nextAction = turtle.getNextAction()
+    res.send(nextAction)
 })
 
 server.listen(PORT);
@@ -51,5 +58,11 @@ io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => {
       console.log('user disconnected');
+    });
+    socket.on('command', (command) => {
+        if(turtles[command.label]){
+            let turtle = turtles[command.label]
+            turtle.nextAction = command.action
+        }
     });
 });

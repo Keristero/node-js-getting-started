@@ -8,6 +8,13 @@ socket.on('turtleInfo', (turtleInfo) => {
 
 let turtles = {}
 
+function renderCommandButton(div,turtle,command){
+    let button = document.createElement('button')
+    button.onclick = ()=>{
+        socket.emit('command',{label:turtle.label,action:command})
+    }
+}
+
 function renderTurtle(turtle){
     let turtle_div = document.createElement('div')
 
@@ -21,6 +28,10 @@ function renderTurtle(turtle){
     y:${turtle.y}\n
     z:${turtle.z}\n
     `
+    renderCommandButton(turtle_div,turtle,"left")
+    renderCommandButton(turtle_div,turtle,"forward")
+    renderCommandButton(turtle_div,turtle,"right")
+
     turtle_div.appendChild(turtle_info)
     return turtle_div
 }
