@@ -33,6 +33,7 @@ function renderTurtle(turtle){
     y:${turtle.y}\n
     z:${turtle.z}\n
     orientation:${turtle.orientation}\n
+    fuel:${turtle.fuel}\n
     nextAction:${turtle.nextAction}\n
     `
     renderCommandButton(turtle_div,turtle,"left")
@@ -115,9 +116,11 @@ function drawGrid(){
 
     for(let x in positionHistory){
         for(let y in positionHistory[x]){
+            let adjustedX = x-lowestX
+            let adjustedY = y-lowestY
             ctx.fillStyle = 'grey'
-            ctx.fillRect(x*gridScale,y*gridScale,gridScale,gridScale)
-            console.log(x,y)
+            ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
+            console.log(adjustedX,adjustedY)
         }
     }
 }

@@ -4,6 +4,7 @@ y = tonumber(args[2])
 z = tonumber(args[3])
 orientation = 1 --North
 label = os.getComputerLabel()
+fuel = turtle.getFuelLevel()
 
 print(label,"starting at",x,y,z)
 
@@ -33,12 +34,14 @@ function getLastPosition()
 end
 
 function requestCommands()
+    fuel = turtle.getFuelLevel()
     local headers = {
         ["label"] = label,
         ["x"] = tostring(x),
         ["y"] = tostring(y),
         ["z"] = tostring(z),
         ["o"] = tostring(orientation),
+        ["f"] = tostring(fuel)
     }
     local res = http.get("https://dry-cove-25939.herokuapp.com/turtle",headers)
     local command = res.readAll()

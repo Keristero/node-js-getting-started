@@ -11,24 +11,25 @@ app.use(express.static('client'))
 
 let turtles = {}
 
-function updateTurtleInfo(label,x,y,z,orientation){
-    console.log(label,x,y,z,orientation)
+function updateTurtleInfo(label,x,y,z,orientation,fuel){
+    console.log(label,x,y,z,orientation,fuel)
     if(!turtles[label]){
         turtles[label] = new Turtle(label)
     }
     let turtle = turtles[label]
-    turtle.recordPos(x,y,z,orientation)
+    turtle.updateInfo(x,y,z,orientation,fuel)
 }
 
 class Turtle{
     constructor(label){
         this.label = label
     }
-    recordPos(x,y,z,orientation){
+    updateInfo(x,y,z,orientation,fuel){
         this.x = x;
         this.y = y;
         this.z = z;
         this.orientation = orientation
+        this.fuel = fuel
     }
     getNextAction(){
         let action = this.nextAction
@@ -49,7 +50,8 @@ app.get('/turtle', (req, res) => {
     let y = Number(req.header('y'))
     let z = Number(req.header('z'))
     let orientation = Number(req.header('o'))
-    updateTurtleInfo(label,x,y,z,orientation)
+    let fuel = Number(req.header('f'))
+    updateTurtleInfo(label,x,y,z,orientation,fuel)
     let turtle = turtles[label]
     let nextAction = turtle.getNextAction()
     res.send(nextAction)
