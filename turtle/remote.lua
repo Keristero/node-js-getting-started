@@ -2,10 +2,30 @@ args = {...}
 x = tonumber(args[1])
 y = tonumber(args[2])
 z = tonumber(args[3])
-local orientation = 1 --North
+orientation = 1 --North
 local label = os.getComputerLabel()
 
 print(label,"starting at",x,y,z)
+
+function tableHasKey(table,key)
+    return table[key] ~= nil
+end
+
+function getLastPosition()
+    local headers = {
+        ["label"] = label
+    }
+    local res = http.get("https://dry-cove-25939.herokuapp.com/lastPosition",headers)
+    local resText = res.readAll()
+    if(resText ~= "none"){
+        lastPos = textutils.unserialize(res.readAll())
+        x = lastPos.x
+        y = lastPos.y
+        z = lastPos.z
+        orientation = lastPos.orientation
+        print("got last pos!",x,y,z)
+    }
+end
 
 function requestCommands()
     local headers = {
@@ -28,6 +48,12 @@ function requestCommands()
     if command == "right" then
         right()
     end
+    if command == "up" then
+        right()
+    end
+    if command == "down" then
+        right()
+    end
 end
 
 function forward()
@@ -37,6 +63,7 @@ function forward()
             if orientation == 2 then x = x+1 end --South
             if orientation == 3 then z = z+1 end --East
             if orientation == 4 then x = x-1 end --West
+            print(x,y,z)
         end
     end
 end
@@ -50,6 +77,22 @@ function left()
     end
 end
 
+function up()
+    if turtle then 
+        if turtle.up() then
+            y = y + 1
+        end
+    end
+end
+
+function down()
+    if turtle then 
+        if turtle.down() then
+            y = y - 1
+        end
+    end
+end
+
 function right()
     if turtle then 
         if turtle.turnRight() then
@@ -59,6 +102,7 @@ function right()
     end
 end
 
+getLastPosition()
 while true do
     requestCommands()
     sleep(1)

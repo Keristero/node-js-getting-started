@@ -29,10 +29,14 @@ function renderTurtle(turtle){
     turtle_info.textContent = `x:${turtle.x}\n
     y:${turtle.y}\n
     z:${turtle.z}\n
+    orientation:${turtle.orientation}\n
+    nextAction:${turtle.nextAction}\n
     `
     renderCommandButton(turtle_div,turtle,"left")
     renderCommandButton(turtle_div,turtle,"forward")
     renderCommandButton(turtle_div,turtle,"right")
+    renderCommandButton(turtle_div,turtle,"up")
+    renderCommandButton(turtle_div,turtle,"down")
 
     turtle_div.appendChild(turtle_info)
     return turtle_div
