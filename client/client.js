@@ -84,7 +84,7 @@ function drawGrid(){
     let lowestX = Infinity
     let lowestY = Infinity
     let highestX = -Infinity
-    let highextY = -Infinity
+    let highestY = -Infinity
     let biggestDifferenceXY = 1
     //Find highest and lowest points
     for(let x in positionHistory){
@@ -99,8 +99,8 @@ function drawGrid(){
             if(y < lowestY){
                 lowestY = y
             }
-            if(y > highextY){
-                highextY = y
+            if(y > highestY){
+                highestY = y
             }
         }
     }
