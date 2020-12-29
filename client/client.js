@@ -29,11 +29,7 @@ function renderHTML(turtleInfo){
     turtles = turtleInfo
 
     //Clear turtle div
-    if(div_turtles.hasOwnProperty('firstChild')){
-        while (div_turtles.firstChild) {
-            div_turtles.removeChild(div_turtles.firstChild);
-        }
-    }
+    div_turtles.innerHTML = ""
 
     //Populate turtle div
     for(let turtleLabel in turtles){
