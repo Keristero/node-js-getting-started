@@ -89,6 +89,7 @@ function drawGrid(){
     let biggestDifferenceXY = 1
     //Find highest and lowest points
     for(let x in positionHistory){
+        x = Number(x)
         if(x < lowestX){
             lowestX = x
         }
@@ -96,6 +97,7 @@ function drawGrid(){
             highestX = x
         }
         for(let y in positionHistory[x]){
+            y = Number(y)
             let locationState = positionHistory[x][y]
             if(y < lowestY){
                 lowestY = y
@@ -115,7 +117,9 @@ function drawGrid(){
     let gridScale = 800/biggestDifferenceXY
 
     for(let x in positionHistory){
+        x = Number(x)
         for(let y in positionHistory[x]){
+            y = Number(y)
             let adjustedX = x-lowestX
             let adjustedY = y-lowestY
             ctx.fillStyle = 'grey'
