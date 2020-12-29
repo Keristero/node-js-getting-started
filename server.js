@@ -67,7 +67,9 @@ app.get('/lastPosition', (req, res) => {
         }
         res.send(JSON.stringify(lastPos))
     }else{
-        res.send("none")
+        return res.status(400).send({
+            message: 'No last position'
+        });
     }
 })
 
