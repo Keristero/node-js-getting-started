@@ -6,7 +6,7 @@ let app = require('express')();
 let http = require('http');
 
 var server = http.createServer(app);
-let io = require('socket.io').listen(server);
+var io = require('socket.io')(server);
 app.use(express.static('client'))
 
 let turtles = {}
@@ -45,9 +45,7 @@ app.get('/turtle', (req, res) => {
     res.send('ok')
 })
 
-app.listen(PORT, () => {
-    console.log(`Example app listening at http://localhost:${PORT}`)
-})
+server.listen(PORT);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
