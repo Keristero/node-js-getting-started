@@ -55,6 +55,15 @@ app.get('/turtle', (req, res) => {
     res.send(nextAction)
 })
 
+function ccSerialize(dict){
+    let str = `{`
+    for(let i in dict){
+        str+=`\n   ${i} = ${dict[i]},`
+    }
+    str+=`\n}`
+    return str
+}
+
 app.get('/lastPosition', (req, res) => {
     let label = req.header('label')
     if(turtles[label]){
@@ -65,7 +74,7 @@ app.get('/lastPosition', (req, res) => {
             z:turtle.z,
             orientation:turtle.orientation
         }
-        res.send(JSON.stringify(lastPos))
+        res.send(ccSerialize(lastPos))
     }else{
         return res.status(400).send({
             message: 'No last position'
