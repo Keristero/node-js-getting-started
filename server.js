@@ -43,9 +43,9 @@ setInterval(()=>{broadcastTurtleInfo()},1000)
 
 app.get('/turtle', (req, res) => {
     let label = req.header('label')
-    let x = req.header('x')
-    let y = req.header('y')
-    let z = req.header('z')
+    let x = Number(req.header('x'))
+    let y = Number(req.header('y'))
+    let z = Number(req.header('z'))
     updateTurtleInfo(label,x,y,z)
     let turtle = turtles[label]
     let nextAction = turtle.getNextAction()
