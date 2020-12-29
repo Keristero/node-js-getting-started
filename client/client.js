@@ -1,6 +1,7 @@
 let socket = io();
 let div_turtles = document.getElementById('div_turtles')
 
+socket.emit('test')
 socket.on('turtleInfo', (turtleInfo) => {
     renderHTML(turtleInfo)
 });
