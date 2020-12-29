@@ -91,17 +91,17 @@ function drawGrid(){
         if(x < lowestX){
             lowestX = x
         }
-        if(y < lowestY){
-            lowestY = y
-        }
         if(x > highestX){
             highestX = x
         }
-        if(y > highextY){
-            highextY = y
-        }
         for(let y in positionHistory[x]){
             let locationState = positionHistory[x][y]
+            if(y < lowestY){
+                lowestY = y
+            }
+            if(y > highextY){
+                highextY = y
+            }
         }
     }
     //Get highest difference between xy for stuff
