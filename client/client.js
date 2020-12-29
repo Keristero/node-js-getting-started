@@ -1,10 +1,8 @@
 let socket = io();
 let div_turtles = document.getElementById('div_turtles')
 
-io.on('connection', (socket) => {
-    socket.on('turtleInfo', (turtleInfo) => {
-        renderHTML(turtleInfo)
-    });
+socket.on('turtleInfo', (turtleInfo) => {
+    renderHTML(turtleInfo)
 });
 
 let turtles = {}
