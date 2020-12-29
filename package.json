@@ -4,7 +4,8 @@
   "description": "A barebones Node.js app using [Express 4](http://expressjs.com/).",
   "main": "index.js",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "socket.io": "^3.0.4"
   },
   "devDependencies": {},
   "scripts": {
