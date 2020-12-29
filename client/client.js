@@ -63,9 +63,9 @@ function renderHTML(turtleInfo){
 
 function recordLocationsToGrid(){
     for(let turtleLabel in turtles){
+        let turtle = turtles[turtleLabel]
         let x = turtle.x
         let y = turtle.z //Important, we want to draw top down so y=z
-        turtleLabel
         if(!positionHistory[x]){
             positionHistory[x] = {}
             if(!positionHistory[x][y]){
