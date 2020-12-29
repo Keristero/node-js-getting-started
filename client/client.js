@@ -114,7 +114,7 @@ function drawGrid(){
     if(difference(lowestY,highestY) > biggestDifferenceXY){
         biggestDifferenceXY = difference(lowestY,highestY)
     }
-    let gridScale = 32
+    let gridScale = Math.min(canvas.width/biggestDifferenceXY,32)
 
     for(let x in positionHistory){
         x = Number(x)
