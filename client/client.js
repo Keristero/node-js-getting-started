@@ -69,9 +69,9 @@ function recordLocationsToGrid(){
         let y = turtle.z //Important, we want to draw top down so y=z
         if(!positionHistory.hasOwnProperty(x)){
             positionHistory[x] = {}
-            if(!positionHistory[x].hasOwnProperty(y)){
-                positionHistory[x][y] = 1 //Visited
-            }
+        }
+        if(!positionHistory[x].hasOwnProperty(y)){
+            positionHistory[x][y] = 1 //Visited
         }
     }
 }
