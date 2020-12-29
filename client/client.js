@@ -47,6 +47,7 @@ function renderTurtle(turtle){
 
 function renderHTML(turtleInfo){
     turtles = turtleInfo
+    recordLocationsToGrid()
 
     //Clear turtle div
     div_turtles.innerHTML = ""
@@ -57,6 +58,7 @@ function renderHTML(turtleInfo){
         let turtle_div = renderTurtle(turtle)
         div_turtles.appendChild(turtle_div)
     }
+    drawGrid()
 }
 
 function recordLocationsToGrid(){
@@ -78,6 +80,7 @@ function difference(a, b){
 }
 
 function drawGrid(){
+    ctx.clearRect(0,0,800,800)
     let lowestX = Infinity
     let lowestY = Infinity
     let highestX = -Infinity
