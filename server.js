@@ -34,7 +34,7 @@ function broadcastTurtleInfo(){
     io.emit('turtleInfo',turtles);
 }
 
-setTimeout(()=>{broadcastTurtleInfo()},1000)
+setInterval(()=>{broadcastTurtleInfo()},1000)
 
 app.get('/turtle', (req, res) => {
     let label = req.header('label')
