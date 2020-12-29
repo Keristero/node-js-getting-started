@@ -16,7 +16,6 @@ function getLastPosition()
         ["label"] = label
     }
     local res = http.get("https://dry-cove-25939.herokuapp.com/lastPosition",headers)
-
     if res.getResponseCode() ~= 200 then
         print("no last pos, run with x y z coordinates!")
         return false
@@ -111,11 +110,9 @@ end
 
 if x == nil and y == nil and z == nil then
     print("no position specified, downloading last position")
-    res = getLastPosition()
+    getLastPosition()
 end
-if res == true then
-    while true do
-        requestCommands()
-        sleep(1)
-    end
+while true do
+    requestCommands()
+    sleep(1)
 end

@@ -1,5 +1,8 @@
 let socket = io();
 let div_turtles = document.getElementById('div_turtles')
+let canvas = document.getElementById('canvas')
+let ctx = canvas.getContext('2d')
+let positionHistory = {}
 
 socket.emit('test')
 socket.on('turtleInfo', (turtleInfo) => {
@@ -53,5 +56,64 @@ function renderHTML(turtleInfo){
         let turtle = turtles[turtleLabel]
         let turtle_div = renderTurtle(turtle)
         div_turtles.appendChild(turtle_div)
+    }
+}
+
+function recordLocationsToGrid(){
+    for(let turtleLabel in turtles){
+        let x = turtle.x
+        let y = turtle.z //Important, we want to draw top down so y=z
+        turtleLabel
+        if(!positionHistory[x]){
+            positionHistory[x] = {}
+            if(!positionHistory[x][y]){
+                positionHistory[x][y] = 1 //Visited
+            }
+        }
+    }
+}
+
+function difference(a, b){
+    return Math.abs(a - b);
+}
+
+function drawGrid(){
+    let lowestX = Infinity
+    let lowestY = Infinity
+    let highestX = -Infinity
+    let highextY = -Infinity
+    let biggestDifferenceXY = 1
+    //Find highest and lowest points
+    for(let x in positionHistory){
+        if(x < lowestX){
+            lowestX = x
+        }
+        if(y < lowestY){
+            lowestY = y
+        }
+        if(x > highestX){
+            highestX = x
+        }
+        if(y > highextY){
+            highextY = y
+        }
+        for(let y in positionHistory[x]){
+            let locationState = positionHistory[x][y]
+        }
+    }
+    //Get highest difference between xy for stuff
+    if(difference(lowestX,highestX) > biggestDifferenceXY){
+        biggestDifferenceXY = difference(lowestX,highestX)
+    }
+    if(difference(lowestY,highestY) > biggestDifferenceXY){
+        biggestDifferenceXY = difference(lowestX,highestX)
+    }
+    let gridScale = 800/biggestDifferenceXY
+
+    for(let x in positionHistory){
+        for(let y in positionHistory[x]){
+            ctx.fillStyle = 'grey'
+            ctx.fillRect(x*gridScale,y*gridScale,gridScale,gridScale)
+        }
     }
 }
