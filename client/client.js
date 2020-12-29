@@ -10,9 +10,11 @@ let turtles = {}
 
 function renderCommandButton(div,turtle,command){
     let button = document.createElement('button')
+    button.textContent = command
     button.onclick = ()=>{
         socket.emit('command',{label:turtle.label,action:command})
     }
+    div.appendChild(button)
 }
 
 function renderTurtle(turtle){
