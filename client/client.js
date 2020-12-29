@@ -80,6 +80,19 @@ function difference(a, b){
     return Math.abs(a - b);
 }
 
+function orientationToArrowUnicode(orientation){
+    if(orientation == 1){
+        return `↑`
+    }else if(orientation == 2){
+        return `→`
+    }else if(orientation == 3){
+        return `↓`
+    }else if(orientation == 4){
+        return `←`
+    }
+
+}
+
 function drawGrid(){
     ctx.clearRect(0,0,800,800)
     let lowestX = Infinity
@@ -116,15 +129,29 @@ function drawGrid(){
     }
     let gridScale = Math.min(canvas.width/biggestDifferenceXY,32)
 
+    //Draw visited places
+    ctx.fillStyle = 'grey'
     for(let x in positionHistory){
         x = Number(x)
         for(let y in positionHistory[x]){
             y = Number(y)
             let adjustedX = x-lowestX
             let adjustedY = y-lowestY
-            ctx.fillStyle = 'grey'
             ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
             console.log(adjustedX,adjustedY)
         }
+    }
+    //Draw turtles
+    ctx.font = "12px Arial";
+    for(let turtleLabel in turtles){
+        let turtle = turtles[turtleLabel]
+        let x = turtle.x
+        let y = turtle.z //Important, we want to draw top down so y=z
+        let adjustedX = x-lowestX
+        let adjustedY = y-lowestY
+        ctx.fillStyle = 'green'
+        ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
+        ctx.fillStyle = 'black'
+        ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`, 10, 50);
     }
 }
