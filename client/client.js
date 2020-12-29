@@ -117,6 +117,7 @@ function drawGrid(){
         for(let y in positionHistory[x]){
             ctx.fillStyle = 'grey'
             ctx.fillRect(x*gridScale,y*gridScale,gridScale,gridScale)
+            console.log(x,y)
         }
     }
 }
