@@ -130,7 +130,7 @@ function drawGrid(){
     let gridScale = Math.min(canvas.width/biggestDifferenceXY,32)
 
     //Draw visited places
-    ctx.fillStyle = 'grey'
+    ctx.fillStyle = 'lightgrey'
     for(let x in positionHistory){
         x = Number(x)
         for(let y in positionHistory[x]){
@@ -149,9 +149,9 @@ function drawGrid(){
         let y = turtle.z //Important, we want to draw top down so y=z
         let adjustedX = x-lowestX
         let adjustedY = y-lowestY
-        ctx.fillStyle = 'green'
+        ctx.fillStyle = 'lightgreen'
         ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
-        ctx.fillStyle = 'blue'
-        ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`, adjustedX*gridScale, adjustedY*gridScale);
+        ctx.fillStyle = 'black'
+        ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`,5+(adjustedX*gridScale), 16+(adjustedY*gridScale));
     }
 }
