@@ -45,9 +45,9 @@ class TurtleMap{
             x = Number(x)
             for(let y in positionHistory[x]){
                 y = Number(y)
-                let adjustedX = x-lowestX
-                let adjustedY = y-lowestY
-                ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
+                let adjustedX = x-this.lowestX
+                let adjustedY = y-this.lowestY
+                ctx.fillRect(adjustedX*this.gridScale,adjustedY*this.gridScale,this.gridScale,this.gridScale)
                 console.log(adjustedX,adjustedY)
             }
         }
@@ -58,12 +58,12 @@ class TurtleMap{
             let turtle = turtles[turtleLabel]
             let x = turtle.x
             let y = turtle.z //Important, we want to draw top down so y=z
-            let adjustedX = x-lowestX
-            let adjustedY = y-lowestY
+            let adjustedX = x-this.lowestX
+            let adjustedY = y-this.lowestY
             ctx.fillStyle = 'lightgreen'
-            ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
+            ctx.fillRect(adjustedX*this.gridScale,adjustedY*this.gridScale,this.gridScale,this.gridScale)
             ctx.fillStyle = 'black'
-            ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`,5+(adjustedX*gridScale), 16+(adjustedY*gridScale));
+            ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`,5+(adjustedX*this.gridScale), 16+(adjustedY*this.gridScale));
         }
     }
     Draw(ctx){
