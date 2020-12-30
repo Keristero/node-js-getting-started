@@ -11,25 +11,26 @@ app.use(express.static('client'))
 
 let turtles = {}
 
-function updateTurtleInfo(label,x,y,z,orientation,fuel){
-    console.log(label,x,y,z,orientation,fuel)
-    if(!turtles[label]){
-        turtles[label] = new Turtle(label)
+function updateOrCreateTurtle(turtleInfo){
+    if(!turtles[turtleInfo.label]){
+        turtles[turtleInfo.label] = new Turtle(turtleInfo.label)
     }
-    let turtle = turtles[label]
-    turtle.updateInfo(x,y,z,orientation,fuel)
+    let turtle = turtles[turtleInfo.label]
+    turtle.updateInfo(turtleInfo)
 }
 
 class Turtle{
     constructor(label){
         this.label = label
     }
-    updateInfo(x,y,z,orientation,fuel){
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.orientation = orientation
-        this.fuel = fuel
+    updateInfo(turtleInfo){
+        this.x = turtleInfo.x;
+        this.y = turtleInfo.y;
+        this.z = turtleInfo.z;
+        this.orientation = turtleInfo.orientation
+        this.fuel = turtleInfo.fuel
+        this.slotsUsed = turtleInfo.slotsUsed;
+        this.heldItems = turtleInfo.heldItems;
     }
     getNextAction(){
         let action = this.nextAction
@@ -45,13 +46,17 @@ function broadcastTurtleInfo(){
 setInterval(()=>{broadcastTurtleInfo()},1000)
 
 app.get('/turtle', (req, res) => {
-    let label = req.header('label')
-    let x = Number(req.header('x'))
-    let y = Number(req.header('y'))
-    let z = Number(req.header('z'))
-    let orientation = Number(req.header('o'))
-    let fuel = Number(req.header('f'))
-    updateTurtleInfo(label,x,y,z,orientation,fuel)
+    let turtleInfo = {
+        label:req.header('label'),
+        x:Number(req.header('x')),
+        y:Number(req.header('y')),
+        z:Number(req.header('z')),
+        orientation:Number(req.header('o')),
+        fuel:Number(req.header('f')),
+        slotsUsed:Number(req.header('su')),
+        heldItems:Number(req.header('hi'))
+    }
+    updateOrCreateTurtle(turtleInfo)
     let turtle = turtles[label]
     let nextAction = turtle.getNextAction()
     res.send(nextAction)

@@ -35,6 +35,8 @@ function renderTurtle(turtle){
     orientation:${turtle.orientation}\n
     fuel:${turtle.fuel}\n
     nextAction:${turtle.nextAction}\n
+    slotsUsed:${turtle.slotsUsed}\n
+    heldItems:${turtle.heldItems}\n
     `
     renderCommandButton(turtle_div,turtle,"left")
     renderCommandButton(turtle_div,turtle,"forward")
@@ -142,7 +144,7 @@ function drawGrid(){
         }
     }
     //Draw turtles
-    ctx.font = "12px Arial";
+    ctx.font = "16px Arial";
     for(let turtleLabel in turtles){
         let turtle = turtles[turtleLabel]
         let x = turtle.x
