@@ -7,7 +7,7 @@ class TurtleMap{
         this.lowestY = Infinity
         this.highestX = -Infinity
         this.highestY = -Infinity
-        this.biggestDifferenceXY = 1
+        let biggestDifferenceXY = 1
         //Find highest and lowest points
         for(let x in positionHistory){
             x = Number(x)
