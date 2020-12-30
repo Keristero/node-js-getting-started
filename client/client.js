@@ -3,6 +3,7 @@ let div_turtles = document.getElementById('div_turtles')
 let canvas = document.getElementById('canvas')
 let ctx = canvas.getContext('2d')
 let positionHistory = {}
+let turtleMap = new TurtleMap()
 
 socket.emit('test')
 socket.on('turtleInfo', (turtleInfo) => {
@@ -61,10 +62,12 @@ function renderHTML(turtleInfo){
         let turtle_div = renderTurtle(turtle)
         div_turtles.appendChild(turtle_div)
     }
-    drawGrid()
+    turtleMap.Draw(ctx)
 }
 
 function recordLocationsToGrid(){
+    //Record the current location of each turtle to a history object
+    //This is used for drawing a map
     for(let turtleLabel in turtles){
         let turtle = turtles[turtleLabel]
         let x = turtle.x
@@ -76,6 +79,8 @@ function recordLocationsToGrid(){
             positionHistory[x][y] = 1 //Visited
         }
     }
+    //Now calculate the edge coordiantes for drawing the map to scale
+    turtleMap.DetectEdgeCoordinates()
 }
 
 function difference(a, b){
@@ -83,6 +88,7 @@ function difference(a, b){
 }
 
 function orientationToArrowUnicode(orientation){
+    //Return an arrow pointing north south east or west
     if(orientation == 1){
         return `↑`
     }else if(orientation == 2){
@@ -95,65 +101,93 @@ function orientationToArrowUnicode(orientation){
 
 }
 
-function drawGrid(){
-    ctx.clearRect(0,0,800,800)
-    let lowestX = Infinity
-    let lowestY = Infinity
-    let highestX = -Infinity
-    let highestY = -Infinity
-    let biggestDifferenceXY = 1
-    //Find highest and lowest points
-    for(let x in positionHistory){
-        x = Number(x)
-        if(x < lowestX){
-            lowestX = x
-        }
-        if(x > highestX){
-            highestX = x
-        }
-        for(let y in positionHistory[x]){
-            y = Number(y)
-            let locationState = positionHistory[x][y]
-            if(y < lowestY){
-                lowestY = y
-            }
-            if(y > highestY){
-                highestY = y
-            }
-        }
-    }
-    //Get highest difference between xy for stuff
-    if(difference(lowestX,highestX) > biggestDifferenceXY){
-        biggestDifferenceXY = difference(lowestX,highestX)
-    }
-    if(difference(lowestY,highestY) > biggestDifferenceXY){
-        biggestDifferenceXY = difference(lowestY,highestY)
-    }
-    let gridScale = Math.min(canvas.width/biggestDifferenceXY,32)
+class TurtleMap{
+    constructor(){
 
-    //Draw visited places
-    ctx.fillStyle = 'lightgrey'
-    for(let x in positionHistory){
-        x = Number(x)
-        for(let y in positionHistory[x]){
-            y = Number(y)
+    }
+    DetectEdgeCoordinates(){
+        this.lowestX = Infinity
+        this.lowestY = Infinity
+        this.highestX = -Infinity
+        this.highestY = -Infinity
+        this.biggestDifferenceXY = 1
+        //Find highest and lowest points
+        for(let x in positionHistory){
+            x = Number(x)
+            if(x < this.lowestX){
+                this.lowestX = x
+            }
+            if(x > this.highestX){
+                this.highestX = x
+            }
+            for(let y in positionHistory[x]){
+                y = Number(y)
+                let locationState = positionHistory[x][y]
+                if(y < this.lowestY){
+                    this.lowestY = y
+                }
+                if(y > this.highestY){
+                    this.highestY = y
+                }
+            }
+        }
+        //Get highest difference between xy for stuff
+        let xDiff = difference(this.lowestX,this.highestX)
+        if(xDiff > biggestDifferenceXY){
+            biggestDifferenceXY = xDiff
+        }
+        let yDiff = difference(this.lowestY,this.highestY)
+        if(yDiff > biggestDifferenceXY){
+            biggestDifferenceXY = yDiff
+        }
+        this.gridScale = Math.min(canvas.width/biggestDifferenceXY,32)
+    }
+    DrawVisitedLocations(){
+        ctx.fillStyle = 'lightgrey'
+        for(let x in positionHistory){
+            x = Number(x)
+            for(let y in positionHistory[x]){
+                y = Number(y)
+                let adjustedX = x-lowestX
+                let adjustedY = y-lowestY
+                ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
+                console.log(adjustedX,adjustedY)
+            }
+        }
+    }
+    DrawTurtles(){
+        ctx.font = "16px Arial";
+        for(let turtleLabel in turtles){
+            let turtle = turtles[turtleLabel]
+            let x = turtle.x
+            let y = turtle.z //Important, we want to draw top down so y=z
             let adjustedX = x-lowestX
             let adjustedY = y-lowestY
+            ctx.fillStyle = 'lightgreen'
             ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
-            console.log(adjustedX,adjustedY)
+            ctx.fillStyle = 'black'
+            ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`,5+(adjustedX*gridScale), 16+(adjustedY*gridScale));
         }
     }
-    //Draw turtles
-    ctx.font = "16px Arial";
-    for(let turtleLabel in turtles){
-        let turtle = turtles[turtleLabel]
-        let x = turtle.x
-        let y = turtle.z //Important, we want to draw top down so y=z
-        let adjustedX = x-lowestX
-        let adjustedY = y-lowestY
-        ctx.fillStyle = 'lightgreen'
-        ctx.fillRect(adjustedX*gridScale,adjustedY*gridScale,gridScale,gridScale)
-        ctx.fillStyle = 'black'
-        ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`,5+(adjustedX*gridScale), 16+(adjustedY*gridScale));
+    Draw(ctx){
+        ctx.clearRect(0,0,800,800)
+
+        //Draw visited places
+        this.DrawVisitedLocations(ctx)
+        //Draw turtles
+        this.DrawTurtles(ctx)
     }
 }
+
+window.addEventListener("mousemove",(event)=>{
+    mousePos = getMousePosOnCanvas(canvas,event)
+})
+
+function getMousePosOnCanvas(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+  

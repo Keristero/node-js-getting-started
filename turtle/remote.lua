@@ -84,13 +84,30 @@ function digSuck(front,up,down)
     checkInventoryFullness()
 end
 
-function forwardDigging()
+function digMoveForward()
     while not forward() do
         if turtle.detect() then
             digSuck(true)
         end
     end
 end
+
+function digMoveUp()
+    while not up() do
+        if turtle.detectUp() then
+            digSuck(false,true)
+        end
+    end
+end
+
+function digMoveDown()
+    while not down() do
+        if turtle.detectDown() then
+            digSuck(false,false,true)
+        end
+    end
+end
+
 
 function forward()
     if turtle then
@@ -134,6 +151,40 @@ function down()
         end
     end
     return false
+end
+
+function digMoveTo(x2,y2,z2)
+    while y < y2 do
+        digMoveUp()
+    end
+    while y > y2 do
+        digMoveDown()
+    end
+    while z > z2 do
+        turnToOrientation(1)--North
+        digMoveForward()
+    end
+    while z < z2 do
+        turnToOrientation(3)--South
+        digMoveForward()
+    end
+    while x > x2 do
+        turnToOrientation(2)--East
+        digMoveForward()
+    end
+    while x < x2 do
+        turnToOrientation(4)--West
+        digMoveForward()
+    end
+end
+
+function turnToOrientation(targetOrientation)
+    while orientation < targetOrientation do
+        right()
+    end
+    while orientation > targetOrientation do
+        left()
+    end
 end
 
 function right()
