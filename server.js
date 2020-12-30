@@ -56,6 +56,7 @@ app.get('/turtle', (req, res) => {
         slotsUsed:Number(req.header('su')),
         heldItems:Number(req.header('hi'))
     }
+    console.log(turtleInfo)
     updateOrCreateTurtle(turtleInfo)
     let turtle = turtles[label]
     let nextAction = turtle.getNextAction()

@@ -1,4 +1,4 @@
-args = {...}
+args = {...} --test
 x = tonumber(args[1])
 y = tonumber(args[2])
 z = tonumber(args[3])
@@ -25,7 +25,6 @@ function getLastPosition()
     end
 
     local resText = res.readAll()
-    print("res",resText)
     local lastPos = textutils.unserialize(resText)
     x = lastPos.x
     y = lastPos.y
@@ -43,8 +42,8 @@ function requestCommands()
         ["y"] = tostring(y),
         ["z"] = tostring(z),
         ["o"] = tostring(orientation),
-        ["f"] = tostring(fuel)
-        ["su"] = tostring(inventorySlotsUsed)
+        ["f"] = tostring(fuel),
+        ["su"] = tostring(inventorySlotsUsed),
         ["hi"] = tostring(heldItems)
     }
     local res = http.get("https://dry-cove-25939.herokuapp.com/turtle",headers)
