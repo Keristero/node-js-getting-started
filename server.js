@@ -43,9 +43,11 @@ function broadcastTurtleInfo(){
     io.emit('turtleInfo',turtles);
 }
 
-setInterval(()=>{broadcastTurtleInfo()},1000)
+setInterval(()=>{broadcastTurtleInfo()},250)
 
 app.get('/turtle', (req, res) => {
+    //Turtles send a get with lots of header info here every second
+    //This webserver responds with the next action they should take
     let turtleInfo = {
         label:req.header('label'),
         x:Number(req.header('x')),
@@ -56,7 +58,7 @@ app.get('/turtle', (req, res) => {
         slotsUsed:Number(req.header('su')),
         heldItems:Number(req.header('hi'))
     }
-    console.log(turtleInfo)
+    console.log(`${turtleInfo.label} fuel:${turtleInfo.fuel}`)
     updateOrCreateTurtle(turtleInfo)
     let turtle = turtles[turtleInfo.label]
     let nextAction = turtle.getNextAction()
@@ -64,6 +66,7 @@ app.get('/turtle', (req, res) => {
 })
 
 function ccSerialize(dict){
+    //Serialize 1d dict into structure that computercraft can decode
     let str = `{`
     for(let i in dict){
         str+=`\n   ${i} = ${dict[i]},`
@@ -73,6 +76,7 @@ function ccSerialize(dict){
 }
 
 app.get('/lastPosition', (req, res) => {
+    //On startup turtles will request their last position for resuming
     let label = req.header('label')
     if(turtles[label]){
         let turtle = turtles[label]
@@ -93,11 +97,13 @@ app.get('/lastPosition', (req, res) => {
 server.listen(PORT);
 
 io.on('connection', (socket) => {
+    //When a web user connects
     console.log('a user connected');
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
     socket.on('command', (command) => {
+        //When a web user issues a commnad for a turtle
         if(turtles[command.label]){
             let turtle = turtles[command.label]
             turtle.nextAction = command.action
