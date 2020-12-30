@@ -58,7 +58,7 @@ app.get('/turtle', (req, res) => {
     }
     console.log(turtleInfo)
     updateOrCreateTurtle(turtleInfo)
-    let turtle = turtles[label]
+    let turtle = turtles[turtleInfo.label]
     let nextAction = turtle.getNextAction()
     res.send(nextAction)
 })
