@@ -52,24 +52,26 @@ class Turtle{
     getNextAction(){
         this.fuelDepot = this.findNearestFromArray(fuelDepots)
         this.storageDepot = this.findNearestFromArray(storageDepots)
+        let action = {name:""}
         if(this.job){
             //If turtle has a job
-            let action = this.job.getNextAction(this,this.fuelDepot,this.storageDepot)
-            return action
+            action = this.job.getNextAction(this,this.fuelDepot,this.storageDepot)
         }else{
             //Otherwise just do next action, manual commands from website usually
-            let action = this.nextAction
+            action = this.nextAction
             this.nextAction = {name:""}
             return action
         }
+        console.log(`sending action to ${this.label}`,action)
+        return action
     }
 }
 
-function broadcastTurtleInfo(){
+function broadcastInfo(){
     io.emit('turtleInfo',turtles);
 }
 
-setInterval(()=>{broadcastTurtleInfo()},250)
+setInterval(()=>{broadcastInfo()},250)
 setInterval(()=>{processJobAllocations()},1000)
 
 app.get('/turtle', (req, res) => {
@@ -174,7 +176,7 @@ io.on('connection', (socket) => {
         if(turtles[command.label]){
             let turtle = turtles[command.label]
             turtle.nextAction = command.action
-            broadcastTurtleInfo()
+            broadcastInfo()
         }
     });
 });

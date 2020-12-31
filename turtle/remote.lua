@@ -46,7 +46,7 @@ local function requestCommands()
     local res = http.get("https://dry-cove-25939.herokuapp.com/turtle",headers)
     local resText = res.readAll()
     local action = textutils.unserialize(resText)
-    if action.name ~= "" & action.name ~= nil then
+    if action.name ~= "" and action.name ~= nil then
         print(action.name)
     end
     if action.name == "left" then
