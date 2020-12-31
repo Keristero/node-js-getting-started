@@ -55,6 +55,7 @@ class Turtle{
         if(this.job){
             //If turtle has a job
             let action = this.job.getNextAction(this,this.fuelDepot,this.storageDepot)
+            return action
         }else{
             //Otherwise just do next action, manual commands from website usually
             let action = this.nextAction
