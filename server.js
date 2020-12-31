@@ -9,7 +9,13 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 app.use(express.static('client'))
 
+//Turtles
+let {distance} = require('./helpers.js')
+let {ExcavateJob} = require('./turtleJobs/TurtleJob')
 let turtles = {}
+let turtleJobs = []
+let fuelDepots = []
+let storageDepots = []
 
 function updateOrCreateTurtle(turtleInfo){
     if(!turtles[turtleInfo.label]){
@@ -32,10 +38,29 @@ class Turtle{
         this.slotsUsed = turtleInfo.slotsUsed;
         this.heldItems = turtleInfo.heldItems;
     }
+    findNearestFromArray(array){
+        let closestEntity = null
+        let smallestDistance = Infinity
+        for(let entity of array){
+            let dist = distance(this,entity)
+            if(dist < smallestDistance){
+                smallestDistance = dist
+                closestEntity = entity
+            }
+        }
+    }
     getNextAction(){
-        let action = this.nextAction
-        this.nextAction = ""
-        return action
+        this.fuelDepot = this.findNearestFromArray(fuelDepots)
+        this.storageDepot = this.findNearestFromArray(storageDepots)
+        if(this.job){
+            //If turtle has a job
+            this.job.getNextAction(this,this.fuelDepot,this.storageDepot)
+        }else{
+            //Otherwise just do next action, manual commands from website usually
+            let action = this.nextAction
+            this.nextAction = ""
+            return action
+        }
     }
 }
 
@@ -44,6 +69,7 @@ function broadcastTurtleInfo(){
 }
 
 setInterval(()=>{broadcastTurtleInfo()},250)
+setInterval(()=>{processJobAllocations()},1000)
 
 app.get('/turtle', (req, res) => {
     //Turtles send a get with lots of header info here every second
@@ -64,6 +90,44 @@ app.get('/turtle', (req, res) => {
     let nextAction = turtle.getNextAction()
     res.send(nextAction)
 })
+
+function processJobAllocations(){
+    //Delete any completed jobs
+    for(let jobIndex in turtleJobs){
+        let job = turtleJobs[jobIndex]
+        if(job.complete){
+            turtleJobs.splice(jobIndex,1)
+            console.log(`deleted completed ${typeof job} job`)
+        }
+    }
+    //Allocate any unallocated jobs
+    for(let job of turtleJobs){
+        if(!job.allocated){
+            job.allocateTurtle(turtles)
+        }
+    }
+}
+
+function testAddJob(){
+    let fuelDepot = {
+        x:933,
+        y:79,
+        z:253,
+        side:'top'
+    }
+    fuelDepots.push(fuelDepot)
+
+    let storageDepot = {
+        x:921,
+        y:80,
+        z:254,
+        side:'bottom'
+    }
+    storageDepots.push(storageDepot)
+
+    let excavateJob = new ExcavateJob(925,79,251)
+    turtleJobs.push(excavateJob)
+}
 
 function ccSerialize(dict){
     //Serialize 1d dict into structure that computercraft can decode

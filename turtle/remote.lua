@@ -1,20 +1,17 @@
-args = {...} --test
-x = tonumber(args[1])
-y = tonumber(args[2])
-z = tonumber(args[3])
-orientation = 1 --North
-label = os.getComputerLabel()
-fuel = turtle.getFuelLevel()
-inventorySlotsUsed = 0
-heldItems = 0
+local args = {...} --test
+local x = tonumber(args[1])
+local y = tonumber(args[2])
+local z = tonumber(args[3])
+local orientation = 1 --North
+local label = os.getComputerLabel()
+local fuel = turtle.getFuelLevel()
+local inventorySlotsUsed = 0
+local heldItems = 0
+local neverBreakBlacklist = {"turtle"}
 
 print(label,"starting at",x,y,z)
 
-function tableHasKey(table,key)
-    return table[key] ~= nil
-end
-
-function getLastPosition()
+local function getLastPosition()
     local headers = {
         ["label"] = label
     }
@@ -34,7 +31,7 @@ function getLastPosition()
     return true
 end
 
-function requestCommands()
+local function requestCommands()
     fuel = turtle.getFuelLevel()
     local headers = {
         ["label"] = label,
@@ -68,23 +65,52 @@ function requestCommands()
     end
 end
 
-function digSuck(front,up,down)
+local function inspectSafeToBreak(front,up,down)
+    --Inspects block in ONE direction to see if we are allowed to break it
+    --Searches for strings from neverBreakBlacklist
+    --Returns true if block is safe to break
+    local block = false
     if front then
-        turtle.dig()
-        turtle.suck()
+        block = turtle.inspect()
+    elseif up then
+        block = turtle.inspectUp()
+    elseif down then
+        block = turtle.inspectDown()
+    end
+    if block then
+        for key,value in ipairs(neverBreakBlacklist) do
+            if string.find(block.name,value) ~= nil then
+                return false
+            end
+        end
+    end
+    return true
+end
+
+local function digSuck(front,up,down)
+    --Given up to three directions, digs a block after checking if it is allowed to do so, then sucks
+    if front then
+        if inspectSafeToBreak(true,nil,nil) then
+            turtle.dig()
+            turtle.suck()
+        end
     end
     if up then
-        turtle.digUp()
-        turtle.suck()
+        if inspectSafeToBreak(nil,true,nil) then
+            turtle.digUp()
+            turtle.suckUp()
+        end
     end
     if down then
-        turtle.dig()
-        turtle.suck()
+        if inspectSafeToBreak(nil,nil,true) then
+            turtle.digDown()
+            turtle.suckDown()
+        end
     end
     checkInventoryFullness()
 end
 
-function digMoveForward()
+local function digMoveForward()
     while not forward() do
         if turtle.detect() then
             digSuck(true)
@@ -92,7 +118,7 @@ function digMoveForward()
     end
 end
 
-function digMoveUp()
+local function digMoveUp()
     while not up() do
         if turtle.detectUp() then
             digSuck(false,true)
@@ -100,7 +126,7 @@ function digMoveUp()
     end
 end
 
-function digMoveDown()
+local function digMoveDown()
     while not down() do
         if turtle.detectDown() then
             digSuck(false,false,true)
@@ -109,7 +135,7 @@ function digMoveDown()
 end
 
 
-function forward()
+local function forward()
     if turtle then
         if turtle.forward() then
             if orientation == 1 then z = z-1 end --North
@@ -122,44 +148,49 @@ function forward()
     return false
 end
 
-function left()
-    if turtle then 
-        if turtle.turnLeft() then
-            orientation = orientation - 1
-            if orientation < 1 then orientation = orientation + 4 end
-            return true
-        end
+local function left()
+    if turtle.turnLeft() then
+        orientation = orientation - 1
+        if orientation < 1 then orientation = orientation + 4 end
+        return true
     end
     return false
 end
 
-function up()
-    if turtle then 
-        if turtle.up() then
-            y = y + 1
-            return true
-        end
+local function right()
+    if turtle.turnRight() then
+        orientation = orientation + 1
+        if orientation > 4 then orientation = orientation - 4 end
+        return true
     end
     return false
 end
 
-function down()
-    if turtle then 
-        if turtle.down() then
-            y = y - 1
-            return true
-        end
+local function up()
+    if turtle.up() then
+        y = y + 1
+        return true
     end
     return false
 end
 
-function digMoveTo(x2,y2,z2)
+local function down()
+    if turtle.down() then
+        y = y - 1
+        return true
+    end
+    return false
+end
+
+local function digMoveTo(x2,y2,z2)
+    --Move on the Y Axis
     while y < y2 do
         digMoveUp()
     end
     while y > y2 do
         digMoveDown()
     end
+    --Move on the Z Axis
     while z > z2 do
         turnToOrientation(1)--North
         digMoveForward()
@@ -168,6 +199,7 @@ function digMoveTo(x2,y2,z2)
         turnToOrientation(3)--South
         digMoveForward()
     end
+    --Move on the X Axis
     while x > x2 do
         turnToOrientation(2)--East
         digMoveForward()
@@ -178,7 +210,7 @@ function digMoveTo(x2,y2,z2)
     end
 end
 
-function turnToOrientation(targetOrientation)
+local function turnToOrientation(targetOrientation)
     while orientation < targetOrientation do
         right()
     end
@@ -187,18 +219,7 @@ function turnToOrientation(targetOrientation)
     end
 end
 
-function right()
-    if turtle then 
-        if turtle.turnRight() then
-            orientation = orientation + 1
-            if orientation > 4 then orientation = orientation - 4 end
-            return true
-        end
-    end
-    return false
-end
-
-function checkInventoryFullness()
+local function checkInventoryFullness()
     inventorySlotsUsed = 16
     heldItems = 0
     for n=1,16 do
@@ -211,6 +232,76 @@ function checkInventoryFullness()
 	end
 end
 
+local function tryTakeItems(stacks,stackSize,front,up,down)
+    --Try suck (stacks) number of stacks of (stackSize) size from ground/inventory
+    checkInventoryFullness()
+    --Record old item total
+    local oldItemCount = heldItems
+    for i=0,stacks do
+        if front then
+            turtle.suck(stackSize)
+        end
+        if up then
+            turtle.suckUp(stackSize)
+        end
+        if down then
+            turtle.suckDown(stackSize)
+        end
+    end
+    checkInventoryFullness()
+    --Return how many items were taken
+    return heldItems-oldItemCount
+end
+
+local function tryRefuel(needed)
+    print( "Refueling" )
+	fuel = turtle.getFuelLevel()
+	if fuel == "unlimited" then
+		return true
+	end
+	if fuel < needed then
+		for n=1,16 do
+			if turtle.getItemCount(n) > 0 then
+				turtle.select(n)
+				if turtle.refuel(1) then
+					while turtle.getItemCount(n) > 0 and turtle.getFuelLevel() < needed do
+						turtle.refuel(1)
+					end
+					if turtle.getFuelLevel() >= needed then
+						turtle.select(1)
+						return true
+					end
+				end
+			end
+		end
+		turtle.select(1)
+		return false
+	end
+	return true
+end
+
+local function tryUnload(front,up,down)
+	print( "Unloading items..." )
+	for n=1,16 do
+		local nCount = turtle.getItemCount(n)
+		if nCount > 0 then
+            turtle.select(n)
+            if front then
+                turtle.drop()
+            end
+            if up then
+                turtle.dropUp()
+            end
+            if down then
+                turtle.dropDown()
+            end
+		end
+    end
+    checkInventoryFullness()
+    turtle.select(1)
+end
+
+--Main code here
 if x == nil and y == nil and z == nil then
     print("no position specified, downloading last position")
     getLastPosition()

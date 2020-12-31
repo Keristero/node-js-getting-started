@@ -48,7 +48,6 @@ class TurtleMap{
                 let adjustedX = x-this.lowestX
                 let adjustedY = y-this.lowestY
                 ctx.fillRect(adjustedX*this.gridScale,adjustedY*this.gridScale,this.gridScale,this.gridScale)
-                console.log(adjustedX,adjustedY)
             }
         }
     }
