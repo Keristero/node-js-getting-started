@@ -64,6 +64,18 @@ local function requestCommands()
     if action.name == "down" then
         down()
     end
+    if action.name == "digMoveTo" then
+        digMoveTo(action.x,action.y,action.z)
+    end
+    if action.name == "takeItems" then
+        local front = action.side == "top"
+        local up = action.side == "up"
+        local down = action.side == "down"
+        takeItems(action.stacks,action.stackSize,front,up,down)
+    end
+    if action.name == "refuel" then
+        refuel(action.needed)
+    end
 end
 
 local function inspectSafeToBreak(front,up,down)
@@ -233,7 +245,7 @@ local function checkInventoryFullness()
 	end
 end
 
-local function tryTakeItems(stacks,stackSize,front,up,down)
+local function takeItems(stacks,stackSize,front,up,down)
     --Try suck (stacks) number of stacks of (stackSize) size from ground/inventory
     checkInventoryFullness()
     --Record old item total
@@ -254,7 +266,7 @@ local function tryTakeItems(stacks,stackSize,front,up,down)
     return heldItems-oldItemCount
 end
 
-local function tryRefuel(needed)
+local function refuel(needed)
     print( "Refueling" )
 	fuel = turtle.getFuelLevel()
 	if fuel == "unlimited" then
@@ -281,7 +293,7 @@ local function tryRefuel(needed)
 	return true
 end
 
-local function tryUnload(front,up,down)
+local function unload(front,up,down)
 	print( "Unloading items..." )
 	for n=1,16 do
 		local nCount = turtle.getItemCount(n)

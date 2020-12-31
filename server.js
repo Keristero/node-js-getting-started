@@ -116,7 +116,7 @@ function testAddJob(){
         x:933,
         y:79,
         z:253,
-        side:'top'
+        side:'up'
     }
     fuelDepots.push(fuelDepot)
 
@@ -124,7 +124,7 @@ function testAddJob(){
         x:921,
         y:80,
         z:254,
-        side:'bottom'
+        side:'down'
     }
     storageDepots.push(storageDepot)
 

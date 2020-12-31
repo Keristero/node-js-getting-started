@@ -47,6 +47,7 @@ class ExcavateJob extends TurtleJob{
         this.x = x
         this.y = y
         this.z = z
+        this.itemsTakenToRefuel = false;
     }
     getNextAction(turtle,refuelDepot,storageDepot){
         let action = {}
@@ -64,10 +65,21 @@ class ExcavateJob extends TurtleJob{
                 return action
             }
             //Otherwise take fuel from the refuel depot
-            action = {
-                name:"takeItems",
-                side:refuelDepot.side,
+            if(!this.itemsTakenToRefuel){
+                action = {
+                    name:"takeItems",
+                    stacks:4,
+                    stackSize:16,
+                    side:refuelDepot.side,
+                }
+                this.itemsTakenToRefuel = true
+                return action
             }
+            action = {
+                name:"refuel",
+                needed:4000
+            }
+            this.itemsTakenToRefuel = true
             return action
         }
         //Drop off
