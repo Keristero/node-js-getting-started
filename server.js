@@ -54,11 +54,11 @@ class Turtle{
         this.storageDepot = this.findNearestFromArray(storageDepots)
         if(this.job){
             //If turtle has a job
-            this.job.getNextAction(this,this.fuelDepot,this.storageDepot)
+            let action = this.job.getNextAction(this,this.fuelDepot,this.storageDepot)
         }else{
             //Otherwise just do next action, manual commands from website usually
             let action = this.nextAction
-            this.nextAction = ""
+            this.nextAction = {name:""}
             return action
         }
     }
@@ -88,7 +88,7 @@ app.get('/turtle', (req, res) => {
     updateOrCreateTurtle(turtleInfo)
     let turtle = turtles[turtleInfo.label]
     let nextAction = turtle.getNextAction()
-    res.send(nextAction)
+    res.send(ccSerialize(nextAction))
 })
 
 function processJobAllocations(){

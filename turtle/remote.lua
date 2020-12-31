@@ -44,23 +44,24 @@ local function requestCommands()
         ["hi"] = tostring(heldItems)
     }
     local res = http.get("https://dry-cove-25939.herokuapp.com/turtle",headers)
-    local command = res.readAll()
-    if command ~= "" then
-        print(command)
+    local resText = res.readAll()
+    local action = textutils.unserialize(resText)
+    if action.name ~= "" then
+        print(action)
     end
-    if command == "left" then
+    if action.name == "left" then
         left()
     end
-    if command == "forward" then
+    if action.name == "forward" then
         forward()
     end
-    if command == "right" then
+    if action.name == "right" then
         right()
     end
-    if command == "up" then
+    if action.name == "up" then
         up()
     end
-    if command == "down" then
+    if action.name == "down" then
         down()
     end
 end
