@@ -21,18 +21,26 @@ class TurtleJob{
         }
         closestTurtle.job = this
         this.allocated = true
-        this.allocatedTurtle = closestTurtle
         return closestTurtle
     }
-    getNextAction(turtle,refuelDepot,storageDepot){
-        let action = {}
-        action.name=""
+    jobDone(turtle){
+        //Job Dun :)
+        turtle.job = false
+        this.complete = true
+        action = {
+            name:"done",
+            text:"default job has nothing to do!"
+        }
         return action
+    }
+    getNextAction(turtle,refuelDepot,storageDepot){
+        return this.jobDone(turtle)
     }
 }
 
 class ExcavateJob extends TurtleJob{
     constructor(x,y,z){
+        super()
         this.x = x
         this.y = y
         this.z = z
@@ -76,26 +84,34 @@ class ExcavateJob extends TurtleJob{
         //If turtle is not in correct place to dig
         if(turtle.x != this.x || turtle.z != this.z){
             //Move to dig site
-            action.name="digMoveTo"
-            action.x=this.x
-            action.y=this.y
-            action.z=this.z
+            action = {
+                name:"digMoveTo",
+                x:this.x,
+                y:this.y,
+                z:this.z
+            }
             return action
         }
         //If turtle is not at bottom of hole
         if(turtle.y > 4){
             //dig to the bottom of the hole
-            action.name="digMoveTo"
-            action.x=this.x
-            action.y=4
-            action.z=this.z
+            action = {
+                name:"digMoveTo",
+                x:this.x,
+                y:4,
+                z:this.z
+            }
             return action
         }
         //If turtle is finished
         if(turtle.x != this.x && turtle.z != this.z && turtle.y == 4){
-            this.complete = true
-            turtle.job = false
+            return this.jobDone(turtle)
         }
+    }
+    jobDone(turtle){
+        let action = super.jobDone(turtle)
+        action.text = "finished excavation!"
+        return action
     }
 }
 
