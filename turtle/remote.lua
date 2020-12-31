@@ -11,7 +11,7 @@ local neverBreakBlacklist = {"turtle"}
 
 print(label,"starting at",x,y,z)
 
-local function getLastPosition()
+function getLastPosition()
     local headers = {
         ["label"] = label
     }
@@ -31,8 +31,7 @@ local function getLastPosition()
     return true
 end
 
-local function requestCommands()
-    fuel = turtle.getFuelLevel()
+function prepareHeaders()
     local headers = {
         ["label"] = label,
         ["x"] = tostring(x),
@@ -43,6 +42,17 @@ local function requestCommands()
         ["su"] = tostring(inventorySlotsUsed),
         ["hi"] = tostring(heldItems)
     }
+    return headers
+end
+
+function reportInfo()
+    local headers = prepareHeaders()
+    http.post("https://dry-cove-25939.herokuapp.com/turtle",headers)
+end
+
+function requestCommands()
+    fuel = turtle.getFuelLevel()
+    local headers = prepareHeaders()
     local res = http.get("https://dry-cove-25939.herokuapp.com/turtle",headers)
     local resText = res.readAll()
     local action = textutils.unserialize(resText)
@@ -78,7 +88,7 @@ local function requestCommands()
     end
 end
 
-local function inspectSafeToBreak(front,up,down)
+function inspectSafeToBreak(front,up,down)
     --Inspects block in ONE direction to see if we are allowed to break it
     --Searches for strings from neverBreakBlacklist
     --Returns true if block is safe to break
@@ -100,7 +110,7 @@ local function inspectSafeToBreak(front,up,down)
     return true
 end
 
-local function digSuck(front,up,down)
+function digSuck(front,up,down)
     --Given up to three directions, digs a block after checking if it is allowed to do so, then sucks
     if front then
         if inspectSafeToBreak(true,nil,nil) then
@@ -123,7 +133,7 @@ local function digSuck(front,up,down)
     checkInventoryFullness()
 end
 
-local function digMoveForward()
+function digMoveForward()
     while not forward() do
         if turtle.detect() then
             digSuck(true)
@@ -131,7 +141,7 @@ local function digMoveForward()
     end
 end
 
-local function digMoveUp()
+function digMoveUp()
     while not up() do
         if turtle.detectUp() then
             digSuck(false,true)
@@ -139,7 +149,7 @@ local function digMoveUp()
     end
 end
 
-local function digMoveDown()
+function digMoveDown()
     while not down() do
         if turtle.detectDown() then
             digSuck(false,false,true)
@@ -148,7 +158,7 @@ local function digMoveDown()
 end
 
 
-local function forward()
+function forward()
     if turtle then
         if turtle.forward() then
             if orientation == 1 then z = z-1 end --North
@@ -161,7 +171,7 @@ local function forward()
     return false
 end
 
-local function left()
+function left()
     if turtle.turnLeft() then
         orientation = orientation - 1
         if orientation < 1 then orientation = orientation + 4 end
@@ -170,7 +180,7 @@ local function left()
     return false
 end
 
-local function right()
+function right()
     if turtle.turnRight() then
         orientation = orientation + 1
         if orientation > 4 then orientation = orientation - 4 end
@@ -179,7 +189,7 @@ local function right()
     return false
 end
 
-local function up()
+function up()
     if turtle.up() then
         y = y + 1
         return true
@@ -187,7 +197,7 @@ local function up()
     return false
 end
 
-local function down()
+function down()
     if turtle.down() then
         y = y - 1
         return true
@@ -195,7 +205,7 @@ local function down()
     return false
 end
 
-local function digMoveTo(x2,y2,z2)
+function digMoveTo(x2,y2,z2)
     --Move on the Y Axis
     while y < y2 do
         digMoveUp()
@@ -223,7 +233,7 @@ local function digMoveTo(x2,y2,z2)
     end
 end
 
-local function turnToOrientation(targetOrientation)
+function turnToOrientation(targetOrientation)
     while orientation < targetOrientation do
         right()
     end
@@ -232,7 +242,7 @@ local function turnToOrientation(targetOrientation)
     end
 end
 
-local function checkInventoryFullness()
+function checkInventoryFullness()
     inventorySlotsUsed = 16
     heldItems = 0
     for n=1,16 do
@@ -245,7 +255,7 @@ local function checkInventoryFullness()
 	end
 end
 
-local function takeItems(stacks,stackSize,front,up,down)
+function takeItems(stacks,stackSize,front,up,down)
     --Try suck (stacks) number of stacks of (stackSize) size from ground/inventory
     checkInventoryFullness()
     --Record old item total
@@ -266,7 +276,7 @@ local function takeItems(stacks,stackSize,front,up,down)
     return heldItems-oldItemCount
 end
 
-local function refuel(needed)
+function refuel(needed)
     print( "Refueling" )
 	fuel = turtle.getFuelLevel()
 	if fuel == "unlimited" then
@@ -293,7 +303,7 @@ local function refuel(needed)
 	return true
 end
 
-local function unload(front,up,down)
+function unload(front,up,down)
 	print( "Unloading items..." )
 	for n=1,16 do
 		local nCount = turtle.getItemCount(n)

@@ -74,9 +74,8 @@ function broadcastInfo(){
 setInterval(()=>{broadcastInfo()},250)
 setInterval(()=>{processJobAllocations()},1000)
 
-app.get('/turtle', (req, res) => {
-    //Turtles send a get with lots of header info here every second
-    //This webserver responds with the next action they should take
+function decodeTurtleRequestHeaders(req){
+    //Turtles send a get/post with lots of header info here every second
     let turtleInfo = {
         label:req.header('label'),
         x:Number(req.header('x')),
@@ -87,11 +86,24 @@ app.get('/turtle', (req, res) => {
         slotsUsed:Number(req.header('su')),
         heldItems:Number(req.header('hi'))
     }
+    return turtleInfo
+}
+
+app.get('/turtle', (req, res) => {
+    //Turtle getting their next action
+    let turtleInfo = decodeTurtleRequestHeaders(req)
     console.log(`${turtleInfo.label} fuel:${turtleInfo.fuel}`)
     updateOrCreateTurtle(turtleInfo)
     let turtle = turtles[turtleInfo.label]
     let nextAction = turtle.getNextAction()
     res.send(ccSerialize(nextAction))
+})
+
+app.post('/turtle', (req, res) => {
+    //Turtles reporting their info
+    let turtleInfo = decodeTurtleRequestHeaders(req)
+    console.log(`${turtleInfo.label} fuel:${turtleInfo.fuel}`)
+    updateOrCreateTurtle(turtleInfo)
 })
 
 function processJobAllocations(){
