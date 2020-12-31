@@ -138,7 +138,15 @@ function ccSerialize(dict){
     //Serialize 1d dict into structure that computercraft can decode
     let str = `{`
     for(let i in dict){
-        str+=`\n   ${i} = ${dict[i]},`
+        let value = dict[i]
+        let serialValue = ``
+        if(typeof value == "string"){
+            serialValue = `"${value}"`
+        }
+        if(typeof value == "number"){
+            serialValue = `${value}`
+        }
+        str+=`\n   ${i} = ${serialValue},`
     }
     str+=`\n}`
     return str
