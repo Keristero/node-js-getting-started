@@ -129,6 +129,8 @@ function testAddJob(){
     turtleJobs.push(excavateJob)
 }
 
+testAddJob()
+
 function ccSerialize(dict){
     //Serialize 1d dict into structure that computercraft can decode
     let str = `{`
