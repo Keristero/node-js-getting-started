@@ -19,9 +19,12 @@ class TurtleJob{
                 }
             }
         }
-        closestTurtle.job = this
-        this.allocated = true
-        return closestTurtle
+        if(closestTurtle){
+            closestTurtle.job = this
+            this.allocated = true
+            return true
+        }
+        return false
     }
     jobDone(turtle){
         //Job Dun :)
