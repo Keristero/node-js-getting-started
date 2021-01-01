@@ -104,6 +104,7 @@ app.post('/turtle', (req, res) => {
     let turtleInfo = decodeTurtleRequestHeaders(req)
     console.log(`${turtleInfo.label} fuel:${turtleInfo.fuel}`)
     updateOrCreateTurtle(turtleInfo)
+    res.send("ok")
 })
 
 function processJobAllocations(){
