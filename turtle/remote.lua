@@ -87,6 +87,12 @@ function requestCommands()
     if action.name == "refuel" then
         refuel(action.needed)
     end
+    if action.name == "unload" then
+        local front = action.side == "top"
+        local up = action.side == "up"
+        local down = action.side == "down"
+        unload(front,up,down)
+    end
 end
 
 function inspectSafeToBreak(front,up,down)

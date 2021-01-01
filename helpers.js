@@ -5,4 +5,8 @@ function distance(p1,p2){
 	return Math.sqrt(dx*dx + dy*dy + dz*dz);
 }
 
-module.exports = {distance}
+function randomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+module.exports = {distance,randomInteger}

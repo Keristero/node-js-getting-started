@@ -83,6 +83,27 @@ class ExcavateJob extends TurtleJob{
             return action
         }
         //Drop off
+        //If turtle almost has a full inventory
+        if(turtle.slotsUsed >= 15){
+            //If turtle is not at the storage depot
+            if(turtle.x != storageDepot.x || turtle.y != storageDepot.y || turtle.z != storageDepot.z){
+                //Go to the storage depot
+                action = {
+                    name:"digMoveTo",
+                    x:storageDepot.x,
+                    y:storageDepot.y,
+                    z:storageDepot.z
+                }
+                return action
+            }
+            //If turtle is at the storage depot
+            //Unload items at depot
+            action = {
+                name:"unload",
+                side:storageDepot.side
+            }
+            return action
+        }
         //IMPLEMENT
 
         //Digging

@@ -10,7 +10,7 @@ var io = require('socket.io')(server);
 app.use(express.static('client'))
 
 //Turtles
-let {distance} = require('./helpers.js')
+let {distance,randomInteger} = require('./helpers.js')
 let {ExcavateJob} = require('./turtleJobs/TurtleJob')
 let turtles = {}
 let turtleJobs = []
@@ -123,7 +123,14 @@ function processJobAllocations(){
     }
 }
 
-function testAddJob(){
+function addTestJobs(testJobCount){
+    for(i = 0; i < testJobCount; i++){
+        let excavateJob = new ExcavateJob(randomInteger(900,950),78,randomInteger(240,260))
+        turtleJobs.push(excavateJob)
+    }
+}
+
+function addTestDepots(){
     let fuelDepot = {
         x:933,
         y:79,
@@ -139,12 +146,10 @@ function testAddJob(){
         side:'down'
     }
     storageDepots.push(storageDepot)
-
-    let excavateJob = new ExcavateJob(925,79,251)
-    turtleJobs.push(excavateJob)
 }
 
-testAddJob()
+addTestDepots()
+addTestJobs(100)
 
 function ccSerialize(dict){
     //Serialize 1d dict into structure that computercraft can decode
