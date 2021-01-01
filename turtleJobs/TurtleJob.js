@@ -30,7 +30,7 @@ class TurtleJob{
         //Job Dun :)
         turtle.job = false
         this.complete = true
-        action = {
+        let action = {
             name:"done",
             text:"default job has nothing to do!"
         }

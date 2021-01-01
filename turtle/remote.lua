@@ -47,7 +47,8 @@ end
 
 function reportInfo()
     local headers = prepareHeaders()
-    http.post("https://dry-cove-25939.herokuapp.com/turtle",headers)
+    local body = ""
+    local res = http.post("https://dry-cove-25939.herokuapp.com/turtle",body,headers)
 end
 
 function requestCommands()
@@ -94,15 +95,15 @@ function inspectSafeToBreak(front,up,down)
     --Returns true if block is safe to break
     local block = false
     if front then
-        block = turtle.inspect()
+        block,blockInfo = turtle.inspect()
     elseif up then
-        block = turtle.inspectUp()
+        block,blockInfo = turtle.inspectUp()
     elseif down then
-        block = turtle.inspectDown()
+        block,blockInfo = turtle.inspectDown()
     end
-    if block then
+    if blockInfo then
         for key,value in ipairs(neverBreakBlacklist) do
-            if string.find(block.name,value) ~= nil then
+            if string.find(blockInfo.name,value) ~= nil then
                 return false
             end
         end
@@ -165,6 +166,7 @@ function forward()
             if orientation == 2 then x = x+1 end --South
             if orientation == 3 then z = z+1 end --East
             if orientation == 4 then x = x-1 end --West
+            reportInfo()
             return true
         end
     end
@@ -175,6 +177,7 @@ function left()
     if turtle.turnLeft() then
         orientation = orientation - 1
         if orientation < 1 then orientation = orientation + 4 end
+        reportInfo()
         return true
     end
     return false
@@ -184,6 +187,7 @@ function right()
     if turtle.turnRight() then
         orientation = orientation + 1
         if orientation > 4 then orientation = orientation - 4 end
+        reportInfo()
         return true
     end
     return false
@@ -192,6 +196,7 @@ end
 function up()
     if turtle.up() then
         y = y + 1
+        reportInfo()
         return true
     end
     return false
@@ -200,12 +205,14 @@ end
 function down()
     if turtle.down() then
         y = y - 1
+        reportInfo()
         return true
     end
     return false
 end
 
 function digMoveTo(x2,y2,z2)
+    print("digging to",x2,y2,z2)
     --Move on the Y Axis
     while y < y2 do
         digMoveUp()
@@ -223,14 +230,15 @@ function digMoveTo(x2,y2,z2)
         digMoveForward()
     end
     --Move on the X Axis
-    while x > x2 do
+    while x < x2 do
         turnToOrientation(2)--East
         digMoveForward()
     end
-    while x < x2 do
+    while x > x2 do
         turnToOrientation(4)--West
         digMoveForward()
     end
+    print("reached",x2,y2,z2)
 end
 
 function turnToOrientation(targetOrientation)
@@ -303,7 +311,7 @@ function refuel(needed)
 	return true
 end
 
-function unload(front,up,down)
+function unload(front,up,down)               
 	print( "Unloading items..." )
 	for n=1,16 do
 		local nCount = turtle.getItemCount(n)
