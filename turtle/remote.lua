@@ -109,7 +109,7 @@ function inspectSafeToBreak(front,up,down)
     end
     if blockInfo then
         for key,value in ipairs(neverBreakBlacklist) do
-            if string.find(blockInfo.name,value) ~= nil then
+            if string.find(blockInfo.name,key) ~= nil then
                 return false
             end
         end
