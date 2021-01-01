@@ -4,10 +4,10 @@ class TurtleMap{
     }
     DetectEdgeCoordinates(){
         this.lowestX = Infinity
-        this.lowestY = Infinity
+        this.lowestZ = Infinity
         this.highestX = -Infinity
-        this.highestY = -Infinity
-        let biggestDifferenceXY = 1
+        this.highestZ = -Infinity
+        let biggestDifferenceXZ = 1
         //Find highest and lowest points
         for(let x in positionHistory){
             x = Number(x)
@@ -17,52 +17,57 @@ class TurtleMap{
             if(x > this.highestX){
                 this.highestX = x
             }
-            for(let y in positionHistory[x]){
-                y = Number(y)
-                let locationState = positionHistory[x][y]
-                if(y < this.lowestY){
-                    this.lowestY = y
+            for(let z in positionHistory[x]){
+                z = Number(z)
+                let locationState = positionHistory[x][z]
+                if(z < this.lowestZ){
+                    this.lowestZ = z
                 }
-                if(y > this.highestY){
-                    this.highestY = y
+                if(z > this.highestZ){
+                    this.highestZ = z
                 }
             }
         }
-        //Get highest difference between xy for stuff
+        //Get highest difference between xz for stuff
         let xDiff = difference(this.lowestX,this.highestX)
-        if(xDiff > biggestDifferenceXY){
-            biggestDifferenceXY = xDiff
+        if(xDiff > biggestDifferenceXZ){
+            biggestDifferenceXZ = xDiff
         }
-        let yDiff = difference(this.lowestY,this.highestY)
-        if(yDiff > biggestDifferenceXY){
-            biggestDifferenceXY = yDiff
+        let zDiff = difference(this.lowestZ,this.highestZ)
+        if(zDiff > biggestDifferenceXZ){
+            biggestDifferenceXZ = zDiff
         }
-        this.gridScale = Math.min(canvas.width/biggestDifferenceXY,32)
+        this.gridScale = Math.min(canvas.width/biggestDifferenceXZ,32)
     }
     DrawVisitedLocations(){
         ctx.fillStyle = 'lightgrey'
         for(let x in positionHistory){
             x = Number(x)
-            for(let y in positionHistory[x]){
-                y = Number(y)
+            for(let z in positionHistory[x]){
+                z = Number(z)
                 let adjustedX = x-this.lowestX
-                let adjustedY = y-this.lowestY
-                ctx.fillRect(adjustedX*this.gridScale,adjustedY*this.gridScale,this.gridScale,this.gridScale)
+                let adjustedZ = z-this.lowestZ
+                ctx.fillRect(adjustedX*this.gridScale,adjustedZ*this.gridScale,this.gridScale,this.gridScale)
             }
         }
+    }
+    YLevelToBrightness(y,minBrightnessOffset=20){
+        let brightness = (255+minBrightnessOffset)/(y+(1+minBrightnessOffset))
+        return brightness
     }
     DrawTurtles(){
         ctx.font = "16px Arial";
         for(let turtleLabel in turtles){
             let turtle = turtles[turtleLabel]
             let x = turtle.x
-            let y = turtle.z //Important, we want to draw top down so y=z
+            let y = turtle.y
+            let z = turtle.z
             let adjustedX = x-this.lowestX
-            let adjustedY = y-this.lowestY
-            ctx.fillStyle = 'lightgreen'
-            ctx.fillRect(adjustedX*this.gridScale,adjustedY*this.gridScale,this.gridScale,this.gridScale)
+            let adjustedZ = z-this.lowestZ
+            ctx.fillStyle = `hsl(114,100%,${this.YLevelToBrightness(y)}%,1)`
+            ctx.fillRect(adjustedX*this.gridScale,adjustedZ*this.gridScale,this.gridScale,this.gridScale)
             ctx.fillStyle = 'black'
-            ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`,5+(adjustedX*this.gridScale), 16+(adjustedY*this.gridScale));
+            ctx.fillText(`${orientationToArrowUnicode(turtle.orientation)} ${turtle.label}`,5+(adjustedX*this.gridScale), 16+(adjustedZ*this.gridScale));
         }
     }
     Draw(ctx){
