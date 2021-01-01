@@ -83,19 +83,9 @@ class ExcavateJob extends TurtleJob{
             return action
         }
         //Drop off
-        if(turtle.fuel < 500){
-            //If turtle does not have enough fuel
-            if(turtle.x != refuelDepot.x || turtle.y != refuelDepot.y || turtle.z != refuelDepot.z){
-                //Go to the refuel depot
-                action = {
-                    name:"digMoveTo",
-                    x:refuelDepot.x,
-                    y:refuelDepot.y,
-                    z:refuelDepot.z
-                }
-                return action
-            }
-        }
+        //IMPLEMENT
+
+        //Digging
         //If turtle is not in correct place to dig
         if(turtle.x != this.x || turtle.z != this.z){
             //Move to dig site
@@ -119,7 +109,7 @@ class ExcavateJob extends TurtleJob{
             return action
         }
         //If turtle is finished
-        if(turtle.x != this.x && turtle.z != this.z && turtle.y == 4){
+        if(turtle.x == this.x && turtle.z == this.z && turtle.y == 4){
             return this.jobDone(turtle)
         }
     }

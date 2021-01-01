@@ -195,7 +195,7 @@ io.on('connection', (socket) => {
         //When a web user issues a commnad for a turtle
         if(turtles[command.label]){
             let turtle = turtles[command.label]
-            turtle.nextAction = command.action
+            turtle.nextAction = {name:command.action}
             broadcastInfo()
         }
     });
