@@ -48,6 +48,7 @@ class Turtle{
                 closestEntity = entity
             }
         }
+        return closestEntity
     }
     getNextAction(){
         this.fuelDepot = this.findNearestFromArray(fuelDepots)
