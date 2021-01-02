@@ -51,7 +51,7 @@ class TurtleMap{
             }
         }
     }
-    YLevelToBrightness(y,minBrightnessOffset=20){
+    YLevelToBrightness(y,minBrightnessOffset=100){
         let brightness = (255+minBrightnessOffset)/(y+(1+minBrightnessOffset))
         return brightness
     }
