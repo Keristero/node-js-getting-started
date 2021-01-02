@@ -150,9 +150,6 @@ function addTestDepots(){
     storageDepots.push(storageDepot)
 }
 
-addTestDepots()
-addTestJobs(100)
-
 function ccSerialize(dict){
     //Serialize 1d dict into structure that computercraft can decode
     let str = `{`
